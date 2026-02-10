@@ -118,6 +118,17 @@
       background: #e5e7eb;
       color: #111827;
     }
+    .button-zone .yesBtn {
+      left: 18%;
+      background: var(--yes);
+      color: #fff;
+    }
+
+    .button-zone .noBtn {
+      left: 62%;
+      background: #e5e7eb;
+      color: #111827;
+    }
 
     .hint {
       margin-top: 10px;
@@ -141,6 +152,9 @@
       margin: 0 auto;
       display: block;
     }
+    .hidden {
+      display: none;
+    }
 
     @keyframes pop {
       from { transform: scale(.96); opacity: 0; }
@@ -159,18 +173,41 @@
         <button onclick="setLanguage('fr')">Français</button>
         <button onclick="setLanguage('vi')">Tiếng Việt</button>
         <button onclick="setLanguage('zh')">中文</button>
-        <button onclick="setLanguage('de')">Deutsch</button>
+        <button onclick="setLanguage('ar')">العربية</button>
     </div>
 </section>
-   
-<section id ="ContentScreen" style="display:none;">
+<section id="q1" class="card hidden">
+    <h1 class="answerquestionText"></h1>
+    <h3 id="question1"></h3>
+    <div class="button-zone">
+        <button onclick="showScreen('q2')" class="yesBtn">Yes</button>
+        <button onclick="showScreen('q2')" class="noBtn">No</button>
+    </div>
+</section>
+<section id="q2" class="card hidden">
+    <h1 class="answerquestionText"></h1>
+    <h3 id="question2"></h3>
+    <div class="button-zone">
+        <button onclick="showScreen('q3')" class="yesBtn">Yes</button>
+        <button onclick="showScreen('q3')" class="noBtn">No</button>
+    </div>
+</section>
+<section id="q3" class="card hidden">
+    <h1 class="answerquestionText"></h1>
+    <h3 id="question3"></h3>
+    <div class="button-zone">
+        <button onclick="showScreen('ContentScreen')" class="yesBtn">Yes</button>
+        <button onclick="showScreen('ContentScreen')" class="noBtn">No</button>
+    </div>
+</section>
+<section id ="ContentScreen" class="hidden">
 <main class="card">
 
   <h1 id="questionText"></h1>
 
   <section class="button-zone" id="zone">
-    <button id="yesBtn">Yes</button>
-    <button id="noBtn">No</button>
+    <button class="yesBtn">Yes</button>
+    <button class="noBtn">No</button>
   </section>
 
   <div class="hint" id="hint">“No” seems a bit shy 😈</div>
@@ -188,9 +225,13 @@
 <canvas id="confettiCanvas"></canvas>
 
 <script>
-    const translations = {
+const translations = {
   en: {
-    question: "Will you be my Valentine?",
+    title: "Answer These Correctly",
+    q1: "Do you love me?",
+    q2: "Do you like my voice?",
+    q3: "Does it turn you on?",
+    q4: "Will you be my Valentine?",
     yes: "Yes",
     no: "No",
     hint: "“No” seems a bit shy 😈",
@@ -198,7 +239,11 @@
   },
 
   es: {
-    question: "¿Quieres ser mi San Valentín?",
+    title: "Responde correctamente",
+    q1: "¿Me amas?",
+    q2: "¿Te gusta mi voz?",
+    q3: "¿Te excita?",
+    q4: "¿Quieres ser mi San Valentín?",
     yes: "Sí",
     no: "No",
     hint: "“No” parece un poco tímido 😈",
@@ -206,7 +251,11 @@
   },
 
   fr: {
-    question: "Veux-tu être ma Valentine ?",
+    title: "Réponds correctement",
+    q1: "Tu m’aimes ?",
+    q2: "Tu aimes ma voix ?",
+    q3: "Est-ce que ça t’excite ?",
+    q4: "Veux-tu être ma Valentine ?",
     yes: "Oui",
     no: "Non",
     hint: "“Non” a l’air un peu timide 😈",
@@ -214,7 +263,11 @@
   },
 
   vi: {
-    question: "Em có muốn làm Valentine của anh không?",
+    title: "Hãy trả lời cho đúng",
+    q1: "Em có yêu anh không?",
+    q2: "Em có thích giọng nói của anh không?",
+    q3: "Điều này có làm em thấy kích thích không?",
+    q4: "Em có muốn làm Valentine của anh không?",
     yes: "Có",
     no: "Không",
     hint: "“Không” có vẻ hơi ngại 😈",
@@ -222,48 +275,76 @@
   },
 
   zh: {
-    question: "你愿意做我的情人节对象吗？",
+    title: "请正确回答",
+    q1: "你爱我吗？",
+    q2: "你喜欢我的声音吗？",
+    q3: "这让你感到兴奋吗？",
+    q4: "你愿意做我的情人节对象吗？",
     yes: "愿意",
     no: "不愿意",
     hint: "“不” 看起来有点害羞 😈",
     yay: "太好了！🎉"
   },
 
-  de: {
-    question: "Willst du mein Valentin sein?",
-    yes: "Ja",
-    no: "Nein",
-    hint: "“Nein” wirkt etwas schüchtern 😈",
-    yay: "JA! 🎉"
+  ar: {
+    title: "أجب بشكل صحيح",
+    q1: "هل تحبني؟",
+    q2: "هل يعجبك صوتي؟",
+    q3: "هل يثيرك ذلك؟",
+    q4: "هل تريد أن تكون فالنتايني؟",
+    yes: "نعم",
+    no: "لا",
+    hint: "يبدو أن \"لا\" خجولة قليلاً 😈",
+    yay: "نعم! 🎉"
   }
 };
+    function showScreen(id) {
+      document.querySelectorAll("section").forEach(sec => {
+      sec.classList.add("hidden");
+    });
 
-function setLanguage(lang) {
-  document.getElementById("LanguageScreen").style.display = "none";
-  document.getElementById("ContentScreen").style.display = "block";
+    const target = document.getElementById(id);
+    target.classList.remove("hidden");
 
-  document.getElementById("questionText").textContent =
-    translations[lang].question;
-
-  document.getElementById("yesBtn").textContent =
-    translations[lang].yes;
-
-  document.getElementById("noBtn").textContent =
-    translations[lang].no;
-
-  document.getElementById("hint").textContent =
-    translations[lang].hint;
-
-  document.getElementById("yayText").textContent =
-    translations[lang].yay;
-}
-  const zone = document.getElementById("zone");
-  const yesBtn = document.getElementById("yesBtn");
-  const noBtn = document.getElementById("noBtn");
-  const result = document.getElementById("result");
-  const hint = document.getElementById("hint");
-  const confettiCanvas = document.getElementById("confettiCanvas");
-
+  // RESET ContentScreen state
+    if (id === "ContentScreen") {
+      zone.style.display = "block";
+      hint.style.display = "block";
+      result.style.display = "none";
+      yesScale = 1;
+      yesBtn.style.transform = "translateY(-50%) scale(1)";
+      }
+    }
+    function setLanguage(lang) {
+      const t = translations[lang];
+    
+      // Q1–Q3 titles
+      document.querySelectorAll(".answerquestionText")
+        .forEach(el => el.textContent = t.title);
+    
+      document.getElementById("question1").textContent = t.q1;
+      document.getElementById("question2").textContent = t.q2;
+      document.getElementById("question3").textContent = t.q3;
+    
+      // Q4 (ContentScreen)
+      document.getElementById("questionText").textContent = t.q4;
+      document.querySelectorAll(".yesBtn")
+        .forEach(btn => btn.textContent = t.yes);
+      document.querySelectorAll(".noBtn")
+        .forEach(btn => btn.textContent = t.no);
+      document.getElementById("hint").textContent = t.hint;
+      document.getElementById("yayText").textContent = t.yay;
+    
+      // Start flow
+      showScreen("q1");
+    }
+    const zone = document.getElementById("zone");
+    const yesBtn = zone.querySelector(".yesBtn");
+    const noBtn = zone.querySelector(".noBtn");
+    const result = document.getElementById("result");
+    const hint = document.getElementById("hint");
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    
   function resizeConfettiCanvas() {
     const dpr = Math.max(1, window.devicePixelRatio || 1);
     confettiCanvas.width = Math.floor(window.innerWidth * dpr);
